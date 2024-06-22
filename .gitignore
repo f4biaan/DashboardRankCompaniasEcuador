@@ -1,0 +1,6 @@
+# Ignorar todos los archivos .csv
+*.csv
+
+# Si hay alguna excepción, puedes usar ! para incluir algún archivo específico
+# !archivo-especifico.csv
+*.csv
