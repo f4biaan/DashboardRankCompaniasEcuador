@@ -20,15 +20,6 @@
         Compañias del Ecuador
       </h1>
       <div class="">
-        <div>
-          <label for="x-axis">Select X-axis:</label>
-          <select id="x-axis"></select>
-        </div>
-        <div>
-          <label for="y-axis">Select Y-axis:</label>
-          <select id="y-axis"></select>
-        </div>
-        <button onclick="updatePlot()">Update Plot</button>
         <div id="plot"></div>
       </div>
     </div>
@@ -38,12 +29,23 @@
       id="provincias-select"
       class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
     >
-      <option value="reset" disabled hidden>Seleccionar provincia...</option>
-      <option value="reset" class="">Todas</option>
+      <option value="reset">Seleccionar provincia...</option>
+      <!-- <option value="reset" class="">Todas</option> -->
       {% for provincia in provincias %}
       <option class="" value="{{ provincia }}">{{ provincia }}</option>
       {% endfor %}
     </select>
+
+    <select
+      id="regiones-select"
+      class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
+    >
+      <option value="reset">Seleccionar región...</option>
+      {% for region in regiones %}
+      <option value="{{ region }}">{{ region }}</option>
+      {% endfor %}
+    </select>
+
     <button id="reset-btn">Reset</button>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

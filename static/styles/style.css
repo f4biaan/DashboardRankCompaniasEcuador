@@ -22,7 +22,8 @@ html {
   border-radius: 5px;
   cursor: pointer;
 }
-#provincias-select {
+#provincias-select,
+#regiones-select {
   margin: 10px auto;
   display: block;
   padding: 5px;
@@ -38,7 +39,6 @@ html {
 .label-tooltip-selected {
   font-size: 15px;
 }
-
 
 #plot {
   width: 500px;

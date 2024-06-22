@@ -9,11 +9,23 @@ print(dfData['Provincia'].unique())
 
 # provincias = ["AZUAY", "BOLIVAR", "CAÑAR", "CARCHI", "CHIMBORAZO", "COTOPAXI", "EL ORO", "ESMERALDAS", "GALAPAGOS", "GUAYAS", "IMBABURA", "LOJA", "LOS RIOS", "MANABI", "MORONA SANTIAGO", "NAPO", "ORELLANA", "PASTAZA", "PICHINCHA", "SANTA ELENA", "SANTO DOMINGO DE LOS TSACHILAS", "SUCUMBIOS", "TUNGURAHUA", "ZAMORA CHINCHIPE"]
 provincias = dfData["Provincia"].unique().tolist()
+regiones = dfData["Region"].unique().tolist()
 
+print(regiones)
 
 @app.route('/')
 def index():
-    return render_template('index.html', provincias=provincias)
+    return render_template(
+        'index.html', 
+        provincias=provincias
+        ,regiones=regiones
+        )
+    
+@app.route('/select_region', methods=['POST'])
+def select_region():
+    selected_region = request.form['region']
+    filtered_provincias = dfData[dfData['Region'] == selected_region]["Provincia"].unique().tolist()
+    return jsonify({'provincias': filtered_provincias})
 
 @app.route('/select_province', methods=['POST'])
 def select_province():
@@ -30,10 +42,15 @@ def plot():
     data = request.json
     x = data['x']
     y = data['y']
-    provincia = data.get('provincia', None)
+    provincia = data.get('provincia', 'reset')
+    region = data.get('region', 'reset')
 
-    if provincia and provincia != 'reset':
+    if provincia != 'reset' and region != 'reset':
+        filtered_df = dfData[(dfData['Provincia'] == provincia) & (dfData['Region'] == region)]
+    elif provincia != 'reset':
         filtered_df = dfData[dfData['Provincia'] == provincia]
+    elif region != 'reset':
+        filtered_df = dfData[dfData['Region'] == region]
     else:
         filtered_df = dfData
         
@@ -42,5 +59,5 @@ def plot():
     return graphJSON
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
+    # app.run(host='0.0.0.0', port=5000, debug=True)

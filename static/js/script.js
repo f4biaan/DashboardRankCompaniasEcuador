@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // var map = L.map('map').setView([-1.8312, -78.1834], 7);
   var map = L.map('map', {
     center: [-1.8312, -78.1834],
     zoom: 6,
     maxBounds: [
-      [-6, -90], // suroeste
-      [3, -75]   // noreste
+      [-6, -90],
+      [3, -75]
     ],
     maxBoundsViscosity: 1.0,
     dragging: false,
@@ -17,27 +16,18 @@ document.addEventListener('DOMContentLoaded', function () {
     inertia: false
   });
 
-
-  /* L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-  }).addTo(map); */
-  /* var blankTileLayer = L.tileLayer('', {
-    attribution: '© OpenStreetMap contributors'
-  }).addTo(map); */
-
   var selectedLayer = null;
+  var layers = [];
 
-  // Estilo por defecto
   function defaultStyle() {
     return {
-      color: 'blue', // color de los bordes
-      weight: 1, // grosor de los bordes
-      fillColor: 'lightblue', // color de relleno
-      fillOpacity: 0.5 // opacidad del relleno
+      color: 'blue',
+      weight: 1,
+      fillColor: 'lightblue',
+      fillOpacity: 0.5
     };
   }
 
-  // Estilo al pasar el ratón
   function highlightStyle() {
     return {
       color: 'blue',
@@ -47,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
     };
   }
 
-  // Estilo al seleccionar
   function selectStyle() {
     return {
       color: 'red',
@@ -57,15 +46,26 @@ document.addEventListener('DOMContentLoaded', function () {
     };
   }
 
+  function regionStyle() {
+    return {
+      color: 'green',
+      weight: 2,
+      fillColor: 'lightgreen',
+      fillOpacity: 0.5
+    };
+  }
 
-  // Cargar el archivo GeoJSON de las provincias de Ecuador
+  function isRegionStyle(layer) {
+    var currentStyle = layer.options;
+    return currentStyle.color === 'green' && currentStyle.fillColor === 'lightgreen';
+  }
+
   fetch('/static/data/ecuador.geojson')
     .then(response => response.json())
     .then(data => {
       L.geoJSON(data, {
         style: defaultStyle,
         onEachFeature: function (feature, layer) {
-          // Agregar la etiqueta con el nombre de la provincia
           layer.bindTooltip(feature.properties.nombre, {
             permanent: true,
             direction: 'center',
@@ -73,44 +73,40 @@ document.addEventListener('DOMContentLoaded', function () {
           });
 
           layer.on('mouseover', function (e) {
-            if (selectedLayer !== layer) {
+            if (!isRegionStyle(layer) && selectedLayer !== layer) {
               layer.setStyle(highlightStyle());
-            }
-          })
-
-          layer.on('mouseout', function (e) {
-            if (selectedLayer !== layer) {
-              layer.setStyle(defaultStyle());
             }
           });
 
-          // Manejar eventos de clic en las provincias
+          layer.on('mouseout', function (e) {
+            if (!isRegionStyle(layer) && selectedLayer !== layer) {
+              layer.setStyle(defaultStyle());
+            }
+          });;
+
           layer.on('click', function (e) {
             if (selectedLayer === layer) {
-              // Si la capa seleccionada es la misma, deseleccionarla
               resetSelection();
             } else {
               selectProvince(feature.properties.nombre, layer);
             }
           });
+
+          layers.push(layer);  // Guardamos la referencia a cada layer
         }
       }).addTo(map);
     });
 
-  // Función para manejar la selección de provincia desde el select
   function selectProvince(provincia, layer) {
-    // Desseleccionar la capa anterior
     if (selectedLayer) {
       selectedLayer.setStyle(defaultStyle());
       selectedLayer.getTooltip().getElement().classList.remove('label-tooltip-selected');
     }
 
-    // Seleccionar la nueva capa
     selectedLayer = layer;
     layer.setStyle(selectStyle());
     layer.getTooltip().getElement().classList.add('label-tooltip-selected');
 
-    // Hacer zoom en la provincia seleccionada
     map.fitBounds(layer.getBounds(), {
       padding: [50, 50],
       maxZoom: 10,
@@ -118,17 +114,13 @@ document.addEventListener('DOMContentLoaded', function () {
       duration: 1
     });
 
-    // Actualizar el select con la provincia seleccionada
     var select = document.getElementById('provincias-select');
-    // console.log(select, provincia);
-    for (var i = 0; i < select.options.length; i++) {
-      if (select.options[i].value === provincia) {
-        select.selectedIndex = i;
-        break;
-      }
+    var option = select.querySelector('option[value="' + provincia + '"]');
+    if (option) {
+      select.value = provincia;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
-    // Enviar selección al servidor
     fetch('/select_province', {
       method: 'POST',
       headers: {
@@ -138,34 +130,40 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Función para resetear la selección
   function resetSelection() {
     if (selectedLayer) {
+      map.setView([-1.8312, -78.1834], 6);
       selectedLayer.setStyle(defaultStyle());
       selectedLayer.getTooltip().getElement().classList.remove('label-tooltip-selected');
       selectedLayer = null;
-      map.setView([-1.8312, -78.1834], 6); // Restablecer el zoom
-      document.getElementById('provincias-select').selectedIndex = 0; // Restablecer el select
+
+      // Restablecer el select y disparar el evento change
+      var select = document.getElementById('provincias-select');
+      console.log('reset' + select.value);
+      select.selectedIndex = 0; // Establece el índice del select a la opción por defecto
+      var event = new Event('change', { bubbles: true });
+      select.dispatchEvent(event); // Disparar el evento change manualmente
+
+
+      var regionSelect = document.getElementById('regiones-select');
+      console.log('reset' + regionSelect.value);
+      regionSelect.selectedIndex = 0;
+      var event2 = new Event('change', { bubbles: true });
+      regionSelect.dispatchEvent(event2);
+
     }
+
+    layers.forEach(layer => {
+      layer.setStyle(defaultStyle());
+    });
   }
 
-  // Manejar el cambio en el select de provincias
   document.getElementById('provincias-select').addEventListener('change', function () {
     var provincia = this.value;
-    // console.log(provincia);
     if (provincia === 'reset') {
       resetSelection();
-    } else if (provincia === 'todas') {
-      map.fitBounds(dataLayer.getBounds(), {
-        padding: [50, 50],
-        maxZoom: 10,
-        animate: true,
-        duration: 1
-      });
     } else {
-      // Encontrar la capa de la provincia seleccionada
-      // console.log(layer);
-      map.eachLayer(function (layer) {
+      layers.forEach(layer => {
         if (layer.feature && layer.feature.properties.nombre === provincia) {
           selectProvince(provincia, layer);
         }
@@ -173,8 +171,48 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Manejar el botón de reset
   document.getElementById('reset-btn').addEventListener('click', function () {
     resetSelection();
+  });
+
+  document.getElementById('regiones-select').addEventListener('change', function () {
+    var region = this.value;
+    resetSelection();
+    if (region === 'reset') {
+      resetSelection();
+    } else {
+      fetch('/select_region', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'region=' + encodeURIComponent(region)
+      })
+        .then(response => response.json())
+        .then(data => {
+          var provinciasSelect = document.getElementById('provincias-select');
+          provinciasSelect.innerHTML = '<option value="reset">Seleccionar provincia...</option>';
+          data.provincias.forEach(function (provincia) {
+            var option = document.createElement('option');
+            option.value = provincia;
+            option.text = provincia;
+            provinciasSelect.add(option);
+
+            console.log(provincia);
+          });
+
+          // console.log(data.provincias);
+          // console.log(layers);
+          layers.forEach(layer => {
+            if (data.provincias.includes(layer.feature.properties.nombre)) {
+              layer.setStyle(regionStyle());
+            } else {
+              // console.log(layer.feature);
+              // console.log(layer.feature.properties.region);
+              layer.setStyle(defaultStyle());
+            }
+          });
+        });
+    }
   });
 });
