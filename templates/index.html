@@ -22,6 +22,41 @@
       <div class="">
         <div id="plot"></div>
       </div>
+
+      <div class="">
+        <h2>Filtros:</h2>
+        <div class="">
+          <select
+            id="tipo-compania-select"
+            class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
+          >
+            <option value="all">Seleccionar tipo de compañía...</option>
+            {% for tipo_compania in tipos_compania %}
+            <option value="{{ tipo_compania }}">{{ tipo_compania }}</option>
+            {% endfor %}
+          </select>
+
+          <select
+            id="tamano-select"
+            class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
+          >
+            <option value="all">Seleccionar tamaño...</option>
+            {% for tamano in tamanos %}
+            <option value="{{ tamano }}">{{ tamano }}</option>
+            {% endfor %}
+          </select>
+
+          <select
+            id="sector-select"
+            class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
+          >
+            <option value="all">Seleccionar sector...</option>
+            {% for sector in sectores %}
+            <option value="{{ sector }}">{{ sector }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
     </div>
     <div id="map"></div>
 

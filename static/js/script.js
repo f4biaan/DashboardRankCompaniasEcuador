@@ -150,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function () {
       regionSelect.selectedIndex = 0;
       var event2 = new Event('change', { bubbles: true });
       regionSelect.dispatchEvent(event2);
-
     }
 
     layers.forEach(layer => {
