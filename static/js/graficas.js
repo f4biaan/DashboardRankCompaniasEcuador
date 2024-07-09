@@ -15,18 +15,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedTamano = tamanoSelect.value;
     const selectedSector = sectorSelect.value;
 
-    console.log(selectedProvincia, selectedRegion, selectedTipoCompania, selectedTamano, selectedSector);
-
-
-
     fetch('/plot', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        x: 'Activo', // Cambia esto al nombre de tu columna x
-        y: 'Patrimonio', // Cambia esto al nombre de tu columna y
         provincia: selectedProvincia,
         region: selectedRegion,
         tipo_compania: selectedTipoCompania,
@@ -45,46 +39,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       });
 
-    updateTopCompanies(selectedRegion, selectedProvincia, selectedTipoCompania, selectedTamano, selectedSector);
+    updateTopCompanies(selectedProvincia, selectedRegion, selectedTipoCompania, selectedTamano, selectedSector);
     updateAggregateData(selectedRegion, selectedProvincia, selectedTipoCompania, selectedTamano, selectedSector);
-    updateLinePlot();  // Añadir esta línea para actualizar la gráfica de líneas
 
   }
-
-  function updateLinePlot() {
-    const selectedTipoCompania = tipoCompaniaSelect.value;
-    const selectedTamano = tamanoSelect.value;
-    const selectedSector = sectorSelect.value;
-
-    fetch('/line_plot', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        provincia: selectedProvincia,
-        region: selectedRegion,
-        tipo_compania: selectedTipoCompania,
-        tamano: selectedTamano,
-        sector: selectedSector
-      })
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        const linePlotDiv = document.getElementById('linePlot');
-        Plotly.react(linePlotDiv, data.data, data.layout, {
-          mode: 'animate',
-          transition: {
-            easing: 'ease-in-out'
-          }
-        });
-      });
-  }
-
 
   function updateTopCompanies(proviceS, regioS, tipoCompaniaS, tamanoS, sectorS) {
-    console.log(regioS, proviceS, tipoCompaniaS, tamanoS, sectorS);
+    // console.log(regioS, proviceS, tipoCompaniaS, tamanoS, sectorS);
+    console.log('provincia: ' + proviceS + ' region: ' + regioS + ' tipo_compania: ' + tipoCompaniaS + ' tamano: ' + tamanoS + ' sector: ' + sectorS + '');
     fetch('/update_top', {
       method: 'POST',
       headers: {
@@ -179,19 +141,15 @@ document.addEventListener('DOMContentLoaded', function () {
   provinciasSelect.addEventListener('change', function (event) {
     selectedProvincia = event.target.value;
     updateTopCompanies(provinciasSelect.value, regionesSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
-    updateAggregateData( regionesSelect.value,provinciasSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
-    // updatePlot();
-    updateLinePlot();  // Añadir esta línea para actualizar la gráfica de líneas
-
+    updateAggregateData(regionesSelect.value, provinciasSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
+    updatePlot();
   });
 
   regionesSelect.addEventListener('change', function (event) {
     selectedRegion = event.target.value;
     updateTopCompanies(provinciasSelect.value, regionesSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
-    updateAggregateData(regionesSelect.value,provinciasSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
-    // updatePlot();
-    updateLinePlot();  // Añadir esta línea para actualizar la gráfica de líneas
-
+    updateAggregateData(regionesSelect.value, provinciasSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
+    updatePlot();
   });
 
   // tipoCompaniaSelect.addEventListener('change', updatePlot);
@@ -203,24 +161,21 @@ document.addEventListener('DOMContentLoaded', function () {
   // sectorSelect.addEventListener('change', updateLinePlot);
 
   tipoCompaniaSelect.addEventListener('change', function () {
-    // updatePlot();
+    updatePlot();
     updateTopCompanies(provinciasSelect.value, regionesSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
     updateAggregateData(regionesSelect.value, provinciasSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
-    updateLinePlot();
   });
 
   tamanoSelect.addEventListener('change', function () {
-    // updatePlot();
+    updatePlot();
     updateTopCompanies(provinciasSelect.value, regionesSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
     updateAggregateData(regionesSelect.value, provinciasSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
-    updateLinePlot();
   });
 
   sectorSelect.addEventListener('change', function () {
-    // updatePlot();
+    updatePlot();
     updateTopCompanies(provinciasSelect.value, regionesSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
     updateAggregateData(regionesSelect.value, provinciasSelect.value, tipoCompaniaSelect.value, tamanoSelect.value, sectorSelect.value);
-    updateLinePlot();
   });
 
 
@@ -234,21 +189,15 @@ document.addEventListener('DOMContentLoaded', function () {
     selectedProvincia = 'reset';
     selectedRegion = 'reset';
 
-    // updatePlot();
-    updateLinePlot();  // Añadir esta línea para actualizar la gráfica de líneas
+    updatePlot();
 
 
     updateTopCompanies('reset', 'reset', 'all', 'all', 'all');
     updateAggregateData('reset', 'reset', 'all', 'all', 'all');
-    // updateLinePlot();
   });
 
   // Inicializar el gráfico al cargar la página
-  // updatePlot();
+  updatePlot();
   updateTopCompanies('reset', 'reset', 'all', 'all', 'all');
   updateAggregateData('reset', 'reset', 'all', 'all', 'all');
-  updateLinePlot();  // Añadir esta línea para actualizar la gráfica de líneas
-
-
-
 });

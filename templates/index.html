@@ -15,6 +15,38 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='styles/style.css') }}"
     />
+
+    <script>
+      $(function () {
+        $("#buscador").autocomplete({
+          source: function (request, response) {
+            $.ajax({
+              url: "/autocomplete",
+              dataType: "json",
+              data: {
+                term: request.term,
+              },
+              success: function (data) {
+                response(data);
+              },
+            });
+          },
+          minLength: 2,
+          select: function (event, ui) {
+            window.location.href =
+              "/empresa/" + encodeURIComponent(ui.item.value);
+          },
+        });
+      });
+
+      function redirigirEmpresa() {
+        var nombreEmpresa = document.getElementById("buscador").value;
+        if (nombreEmpresa) {
+          window.location.href =
+            "/empresa/" + encodeURIComponent(nombreEmpresa);
+        }
+      }
+    </script>
   </head>
   <body>
     <div
@@ -124,14 +156,48 @@
         </div>
 
         <div class="top-box object-contain flex felx-col">
-          <div class="leftbox w-1/2">
-            <div id="map"></div>
+          <div class="">
+            <div class="leftbox w-1/2 p-16">
+              <div id="map"></div>
+            </div>
+            <div class="rightbox w-1/2"></div>
           </div>
-          <div class="rightbox w-1/2"></div>
+          <div class="w-full p-8 flex justify-center content-center">
+            <!-- <article class="flex flex-col justify-center content-center">
+              <h1>Buscador de Empresas</h1>
+              <input
+                type="text"
+                id="buscador"
+                placeholder="Nombre de la empresa"
+              />
+              <button onclick="redirigirEmpresa()">Buscar</button>
+            </article> -->
+            <article class="bg-white rounded-lg p-6 w-80">
+              <h1
+                class="text-xl font-bold mb-4 text-center"
+                style="color: var(--color-1)"
+              >
+                Buscador de Empresas
+              </h1>
+              <input
+                type="text"
+                id="buscador"
+                placeholder="Nombre de la empresa"
+                class="border-2 border-gray-300 mb-4 px-3 py-2 rounded-lg w-full focus:outline-none focus:border-blue-500"
+              />
+              <button
+                onclick="redirigirEmpresa()"
+                class="hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                style="background-color: var(--color-3)"
+              >
+                Buscar
+              </button>
+            </article>
+          </div>
         </div>
-        <div id="linePlot"></div>
-
-        <!-- <div id="plot"></div> -->
+        <div class="flex justify-center content-center">
+          <div id="plot"></div>
+        </div>
       </div>
     </div>
 

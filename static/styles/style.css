@@ -53,8 +53,14 @@ html {
 }
 
 #plot {
-  width: 500px;
-  height: 500px;
+  width: 100%;
+  height: 400px;
+}
+
+#plot_empresa {
+  width: 100%;
+  height: 700px;
+
 }
 
 .container {

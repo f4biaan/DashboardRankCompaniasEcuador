@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dashboard</title>
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='assets/favicon.jpeg') }}"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/style.css') }}"
+    />
+  </head>
+  <body class="bg-[#f0ecf0]">
+    <div
+      class="top-0 p-4 rounded-b flex flex-row relative items-center"
+      style="background-color: var(--color-1)"
+    >
+      <h1 class="text-5xl font-bold text-center text-white w-full">
+        Información de Compañías del Ecuador
+      </h1>
+    </div>
+    <div class="flex flex col content-center justify-center">
+      <div class="p-12 text-[#096a75] w-fit">
+        <h1 class="text-2xl font-bold mb-4">Información de la Empresa</h1>
+        <p class="mb-2">
+          <span class="font-semibold">Nombre:</span>
+          {{ empresa['Nombre'] }}
+        </p>
+        <p class="mb-2">
+          <span class="font-semibold">Tipo de Empresa:</span> {{
+          empresa['Tipo_Compania'] }}
+        </p>
+        <p class="mb-2">
+          <span class="font-semibold">Región:</span> {{ empresa['Region'] }}
+        </p>
+        <p class="mb-2">
+          <span class="font-semibold">Provincia:</span> {{ empresa['Provincia']
+          }}
+        </p>
+        <p class="mb-2">
+          <span class="font-semibold">Tamaño de la Empresa:</span> {{
+          empresa['Tamaño'] }}
+        </p>
+        <p class="mb-2">
+          <span class="font-semibold">Sector:</span> {{ empresa['Sector'] }}
+        </p>
+        <p class="mb-2">
+          <span class="font-semibold">Activos:</span> {{ empresa['Activo'] }}
+        </p>
+        <p class="mb-2">
+          <span class="font-semibold">Patrimonio:</span> {{
+          empresa['Patrimonio'] }}
+        </p>
+        <p class="mb-2">
+          <span class="font-semibold">Ingresos por Ventas:</span> {{
+          empresa['Ingreso_por_ventas'] }}
+        </p>
+        <p class="mb-2">
+          <span class="font-semibold">Ingresos Totales:</span> {{
+          empresa['Ingreso_Total'] }}
+        </p>
+      </div>
+      <div id="plot_empresa"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/graficas.js') }}"></script>
+
+    <script>
+      // Get the pathname and split it by '/'
+      function updatePlot(empresa) {
+        fetch("/plot_empresa", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nombre_empresa: empresa["Nombre"],
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const plotDiv = document.getElementById("plot_empresa");
+            Plotly.react(plotDiv, data.data, data.layout, {
+              mode: "animate",
+              transition: {
+                easing: "ease-in-out",
+              },
+            });
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM fully loaded and parsed");
+        const currentUrl = window.location.href;
+        console.log("Current URL:", currentUrl);
+        const parts = currentUrl.split("/");
+        console.log("Parts:", parts);
+        // Get the last part of the pathname
+        const lastPart = parts[parts.length - 1];
+        console.log("Last part of the pathname:", lastPart);
+        updatePlot("lastPart");
+      });
+    </script>
+  </body>
+</html>
