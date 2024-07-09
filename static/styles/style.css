@@ -1,3 +1,15 @@
+:root {
+  --color-1: #096a75;
+  --color-2: #569ca3;
+  --color-3: #3ac3ca;
+  --color-4: #86d7de;
+  --color-5: #f0ecf0;
+}
+
+body {
+  /* background-color: var(--color-1); */
+}
+
 html {
   box-sizing: border-box;
   padding: 0;
@@ -24,9 +36,9 @@ html {
 }
 #provincias-select,
 #regiones-select {
-  margin: 10px auto;
+  /* margin: 10px auto; */
   display: block;
-  padding: 5px;
+  /* padding: 5px; */
 }
 .label-tooltip {
   font-size: 8px;
@@ -44,3 +56,113 @@ html {
   width: 500px;
   height: 500px;
 }
+
+.container {
+  width: 100vw;
+}
+
+.top-companies {
+  background-color: var(--color-4);
+  width: 100%;
+  /* padding-right: 1rem; */
+  padding: 0.5rem;
+}
+
+/* Top companies - start */
+.companies-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.company-card {
+  background-color: var(--color-5);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.company-card .index {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--color-1);
+  margin-right: 1rem;
+}
+
+.company-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.company-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.company-info p {
+  margin: 0.2rem 0 0;
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Top companies - end */
+
+/* Cards ford data resume -start */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  flex: 1 1 calc(25% - 20px); /* Cuatro cards por fila */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-1);
+}
+
+.card h2 {
+  /* margin-top: 0; */
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-5);
+  text-align: center;
+  height: 50%;
+  font-weight: bolder;
+}
+
+.card p {
+  bottom: 0;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+/* Cards ford data resume -end */
+
+
+/* Bubble chat - start */
+.bubble-chat {
+  display: none;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000;
+  max-width: 300px;
+}
+
+.bubble-chat p {
+  margin: 5px 0;
+}
+
+/* Bubble chat - end */

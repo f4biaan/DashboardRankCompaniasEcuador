@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Dashboard</title>
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='assets/favicon.jpeg') }}"
+    />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link
@@ -13,22 +17,55 @@
     />
   </head>
   <body>
-    <div class="container">
-      <h1
-        class="w-screen top-0 text-4xl font-bold text-center text-white bg-blue-500 p-4 rounded-md"
+    <div
+      class="top-0 p-4 rounded-b flex flex-row relative items-center"
+      style="background-color: var(--color-1)"
+    >
+      <button
+        id="reset-btn"
+        class="absolute left-4 center"
+        style="background-color: var(--color-3)"
       >
-        Compañias del Ecuador
-      </h1>
-      <div class="">
-        <div id="plot"></div>
-      </div>
+        Reset
+      </button>
 
-      <div class="">
-        <h2>Filtros:</h2>
-        <div class="">
+      <h1 class="text-5xl font-bold text-center text-white w-full">
+        Compañías del Ecuador
+      </h1>
+    </div>
+
+    <div class="flex w-full">
+      <div class="m-8 w-1/4">
+        <div class="flex flex-col">
+          <h2 class="font-bold">Filtros principales:</h2>
+          <select
+            id="regiones-select"
+            class="p-2 m-2 rounded-md border-2 cursor-pointer focus:outline-none w-full"
+            style="border-color: var(--color-2)"
+          >
+            <option value="reset">Seleccionar región...</option>
+            {% for region in regiones %}
+            <option value="{{ region }}">{{ region }}</option>
+            {% endfor %}
+          </select>
+
+          <select
+            id="provincias-select"
+            class="p-2 m-2 rounded-md border-2 cursor-pointer focus:outline-none w-full"
+            style="border-color: var(--color-2)"
+          >
+            <option value="reset">Seleccionar provincia...</option>
+            <!-- <option value="reset" class="">Todas</option> -->
+            {% for provincia in provincias %}
+            <option class="" value="{{ provincia }}">{{ provincia }}</option>
+            {% endfor %}
+          </select>
+
+          <h2 class="font-bold">Filtros secundarios:</h2>
           <select
             id="tipo-compania-select"
-            class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
+            class="p-2 m-2 rounded-md border-2 cursor-pointer focus:outline-none w-full"
+            style="border-color: var(--color-3)"
           >
             <option value="all">Seleccionar tipo de compañía...</option>
             {% for tipo_compania in tipos_compania %}
@@ -38,7 +75,8 @@
 
           <select
             id="tamano-select"
-            class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
+            class="p-2 m-2 rounded-md border-2 cursor-pointer focus:outline-none w-full"
+            style="border-color: var(--color-3)"
           >
             <option value="all">Seleccionar tamaño...</option>
             {% for tamano in tamanos %}
@@ -48,7 +86,8 @@
 
           <select
             id="sector-select"
-            class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
+            class="p-2 m-2 rounded-md border-2 cursor-pointer focus:outline-none w-full"
+            style="border-color: var(--color-3)"
           >
             <option value="all">Seleccionar sector...</option>
             {% for sector in sectores %}
@@ -56,32 +95,45 @@
             {% endfor %}
           </select>
         </div>
+
+        <!-- top companies sales -->
+        <article class="container top-companies p-2 m-2 rounded-md">
+          <h2 class="font-bold">
+            Top 5 Compañías del Año
+            <span id="latest_year">{{ latest_year }}</span>
+          </h2>
+          <p>Ingresos por ventas</p>
+          <div class="companies-stack" id="top_companies_list">
+            {% for company in top_companies %}
+            <div class="company-card">
+              <span class="index">{{ loop.index }}</span>
+              <div class="company-info">
+                <h3>{{ company.Nombre }}</h3>
+                <p>Ingresos: {{ company.Ingreso_por_ventas }}</p>
+                <!-- <pre>{{company}}</pre> -->
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </article>
+      </div>
+
+      <div class="container w-3/4">
+        <div class="cards-container py-8 pr-4" id="aggregate_data_cards">
+          <!-- Aquí se insertarán las cards -->
+        </div>
+
+        <div class="top-box object-contain flex felx-col">
+          <div class="leftbox w-1/2">
+            <div id="map"></div>
+          </div>
+          <div class="rightbox w-1/2"></div>
+        </div>
+        <div id="linePlot"></div>
+
+        <!-- <div id="plot"></div> -->
       </div>
     </div>
-    <div id="map"></div>
-
-    <select
-      id="provincias-select"
-      class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
-    >
-      <option value="reset">Seleccionar provincia...</option>
-      <!-- <option value="reset" class="">Todas</option> -->
-      {% for provincia in provincias %}
-      <option class="" value="{{ provincia }}">{{ provincia }}</option>
-      {% endfor %}
-    </select>
-
-    <select
-      id="regiones-select"
-      class="w-1/4 p-2 m-2 rounded-md border-none cursor-pointer focus:outline-none"
-    >
-      <option value="reset">Seleccionar región...</option>
-      {% for region in regiones %}
-      <option value="{{ region }}">{{ region }}</option>
-      {% endfor %}
-    </select>
-
-    <button id="reset-btn">Reset</button>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

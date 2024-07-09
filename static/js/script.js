@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function defaultStyle() {
     return {
-      color: 'blue',
+      color: '#569ca3',
       weight: 1,
       fillColor: 'lightblue',
       fillOpacity: 0.5
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function highlightStyle() {
     return {
-      color: 'blue',
+      color: '#096a75',
       weight: 2,
       fillColor: 'lightblue',
       fillOpacity: 0.7
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Restablecer el select y disparar el evento change
       var select = document.getElementById('provincias-select');
-      console.log('reset' + select.value);
+      console.log('reset ' + select.value);
       select.selectedIndex = 0; // Establece el índice del select a la opción por defecto
       var event = new Event('change', { bubbles: true });
       select.dispatchEvent(event); // Disparar el evento change manualmente
